@@ -11,17 +11,26 @@ function Header() {
   );
 }
 
+function ReadingStatus({ book, onToggle }) {
+  return (
+    <div>
+      <p>Status: {book.completed ? "Completed" : "Not Read"}</p>
+
+      <button onClick={() => onToggle(book.id)}>
+        {book.completed ? "Mark as Unread" : "Mark as Completed"}
+      </button>
+    </div>
+  );
+}
+
 function BookCard({ book, onRemove, onToggle }) {
   return (
     <article>
       <h2>{book.title}</h2>
       <p>Author: {book.creator}</p>
       <p>Category: {book.category}</p>
-      <p>Status: {book.completed ? "Completed" : "Not Read"}</p>
 
-      <button onClick={() => onToggle(book.id)}>
-        {book.completed ? "Mark as Unread" : "Mark as Completed"}
-      </button>
+      <ReadingStatus book={book} onToggle={onToggle} />
 
       <button onClick={() => onRemove(book.id)}>
         Remove Book
