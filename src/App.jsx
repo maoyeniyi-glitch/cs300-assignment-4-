@@ -2,12 +2,30 @@ import { useState } from "react";
 import "./styles.css";
 import books from "../data/books.json";
 
-function BookCard({ book }) {
+function Header() {
+  return (
+    <header>
+      <h1>My Reading List</h1>
+      <p>Manage your books and track your reading progress.</p>
+    </header>
+  );
+}
+
+function BookCard({ book, onRemove, onToggle }) {
   return (
     <article>
       <h2>{book.title}</h2>
       <p>Author: {book.creator}</p>
       <p>Category: {book.category}</p>
+      <p>Status: {book.completed ? "Completed" : "Not Read"}</p>
+
+      <button onClick={() => onToggle(book.id)}>
+        {book.completed ? "Mark as Unread" : "Mark as Completed"}
+      </button>
+
+      <button onClick={() => onRemove(book.id)}>
+        Remove Book
+      </button>
     </article>
   );
 }
@@ -35,7 +53,8 @@ function BookForm({ onAdd }) {
       id: crypto.randomUUID(),
       title: validTitle,
       creator: validCreator,
-      category: "General"
+      category: "General",
+      completed: false
     });
 
     setTitle("");
@@ -45,6 +64,7 @@ function BookForm({ onAdd }) {
   return (
     <form onSubmit={handleSubmit}>
       <label htmlFor="title">Book Title</label>
+
       <input
         id="title"
         value={title}
@@ -52,9 +72,11 @@ function BookForm({ onAdd }) {
         aria-describedby="title-error"
         aria-invalid={!!titleError}
       />
+
       <p id="title-error">{titleError}</p>
 
       <label htmlFor="creator">Author</label>
+
       <input
         id="creator"
         value={creator}
@@ -62,6 +84,7 @@ function BookForm({ onAdd }) {
         aria-describedby="creator-error"
         aria-invalid={!!creatorError}
       />
+
       <p id="creator-error">{creatorError}</p>
 
       <button type="submit">Add Book</button>
@@ -69,22 +92,89 @@ function BookForm({ onAdd }) {
   );
 }
 
+function CollectionControls({ filter, onFilterChange }) {
+  return (
+    <section>
+      <label htmlFor="filter">Filter Books</label>
+
+      <select
+        id="filter"
+        value={filter}
+        onChange={(e) => onFilterChange(e.target.value)}
+      >
+        <option value="all">All Books</option>
+        <option value="unread">Not Read</option>
+        <option value="completed">Completed</option>
+      </select>
+    </section>
+  );
+}
+
+function BookList({ books, onRemove, onToggle }) {
+  if (books.length === 0) {
+    return <p>No matching books found.</p>;
+  }
+
+  return (
+    <section>
+      {books.map((book) => (
+        <BookCard
+          key={book.id}
+          book={book}
+          onRemove={onRemove}
+          onToggle={onToggle}
+        />
+      ))}
+    </section>
+  );
+}
+
 export default function App() {
   const [collection, setCollection] = useState(books);
+  const [filter, setFilter] = useState("all");
 
   function addBook(newBook) {
     setCollection((previous) => [...previous, newBook]);
   }
 
+  function removeBook(id) {
+    setCollection((previous) =>
+      previous.filter((book) => book.id !== id)
+    );
+  }
+
+  function toggleStatus(id) {
+    setCollection((previous) =>
+      previous.map((book) =>
+        book.id === id
+          ? { ...book, completed: !book.completed }
+          : book
+      )
+    );
+  }
+
+  const filteredBooks = collection.filter((book) => {
+    if (filter === "completed") return book.completed;
+    if (filter === "unread") return !book.completed;
+    return true;
+  });
+
   return (
     <main>
-      <h1>My Reading List</h1>
+      <Header />
 
       <BookForm onAdd={addBook} />
 
-      {collection.map((book) => (
-        <BookCard key={book.id} book={book} />
-      ))}
+      <CollectionControls
+        filter={filter}
+        onFilterChange={setFilter}
+      />
+
+      <BookList
+        books={filteredBooks}
+        onRemove={removeBook}
+        onToggle={toggleStatus}
+      />
     </main>
   );
 }

@@ -1,1 +1,91 @@
-/* Write your own responsive styles and focus treatment here. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+form,
+article {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #cbd5e1;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #64748b;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+button {
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #1e40af;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+input[aria-invalid="true"] {
+  border: 2px solid #b91c1c;
+}
+
+#title-error,
+#creator-error {
+  color: #b91c1c;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  main {
+    padding: 12px;
+  }
+
+  article button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
