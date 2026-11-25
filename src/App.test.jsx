@@ -1,15 +1,39 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { expect, test } from "vitest";
 import App from "./App.jsx";
 
-// Two sample tests so `npm test` passes from the starter.
-// They do not count toward your required tests. Replace them with tests of your own behavior.
-test("shows the starter heading", () => {
+test("adds a new book to the reading list", () => {
   render(<App />);
-  expect(screen.getByText("Your application starts here")).toBeInTheDocument();
+
+  fireEvent.change(screen.getByLabelText("Book Title"), {
+    target: { value: "Things Fall Apart" }
+  });
+
+  fireEvent.change(screen.getByLabelText("Author"), {
+    target: { value: "Chinua Achebe" }
+  });
+
+  fireEvent.click(
+    screen.getByRole("button", { name: "Add Book" })
+  );
+
+  expect(
+    screen.getByText("Things Fall Apart")
+  ).toBeInTheDocument();
 });
 
-test("renders a main landmark", () => {
+test("shows errors when the form is empty", () => {
   render(<App />);
-  expect(screen.getByRole("main")).toBeInTheDocument();
+
+  fireEvent.click(
+    screen.getByRole("button", { name: "Add Book" })
+  );
+
+  expect(
+    screen.getByText("Enter a title.")
+  ).toBeInTheDocument();
+
+  expect(
+    screen.getByText("Enter an author.")
+  ).toBeInTheDocument();
 });
